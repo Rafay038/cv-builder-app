@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1>Create account</h1>
+      <p>Sign up to use the CV builder</p>
+
+      <form id="signupForm">
+        <label for="signupName">Full Name</label>
+        <input id="signupName" type="text" required />
+
+        <label for="signupEmail">Email</label>
+        <input id="signupEmail" type="email" required />
+
+        <label for="signupPassword">Password</label>
+        <input id="signupPassword" type="password" required />
+
+        <button type="submit">Sign Up</button>
+      </form>
+
+      <p id="signupMessage"></p>
+      <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
