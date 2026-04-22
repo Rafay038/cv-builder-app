@@ -1,28 +1,60 @@
 const generateBtn = document.getElementById("generateBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+const clearBtn = document.getElementById("clearBtn");
 
-function valueOrFallback(value, fallbackText) {
-  return value.trim() ? value.trim() : fallbackText;
+function getValue(id) {
+  return document.getElementById(id).value.trim();
+}
+
+function fillText(elementId, value, fallbackText) {
+  const element = document.getElementById(elementId);
+  element.textContent = value ? value : fallbackText;
 }
 
 function generateCV() {
-  const fullName = document.getElementById("fullName").value;
-  const jobTitle = document.getElementById("jobTitle").value;
-  const about = document.getElementById("about").value;
-  const experience = document.getElementById("experience").value;
-  const education = document.getElementById("education").value;
-  const skills = document.getElementById("skills").value;
-  const certifications = document.getElementById("certifications").value;
-  const languages = document.getElementById("languages").value;
+  const fullName = getValue("fullName");
+  const jobTitle = getValue("jobTitle");
+  const email = getValue("email");
+  const phone = getValue("phone");
+  const address = getValue("address");
+  const about = getValue("about");
+  const experience = getValue("experience");
+  const education = getValue("education");
+  const skills = getValue("skills");
+  const certifications = getValue("certifications");
+  const languages = getValue("languages");
 
-  document.getElementById("previewName").textContent = valueOrFallback(fullName, "Your Name");
-  document.getElementById("previewTitle").textContent = valueOrFallback(jobTitle, "Your Job Title");
-  document.getElementById("previewAbout").textContent = valueOrFallback(about, "Your about section will appear here.");
-  document.getElementById("previewExperience").textContent = valueOrFallback(experience, "Your experience will appear here.");
-  document.getElementById("previewEducation").textContent = valueOrFallback(education, "Your education will appear here.");
-  document.getElementById("previewSkills").textContent = valueOrFallback(skills, "Your skills will appear here.");
-  document.getElementById("previewCertifications").textContent = valueOrFallback(certifications, "Your certifications will appear here.");
-  document.getElementById("previewLanguages").textContent = valueOrFallback(languages, "Your languages will appear here.");
+  const contactParts = [];
+
+  if (email) {
+    contactParts.push(email);
+  }
+
+  if (phone) {
+    contactParts.push(phone);
+  }
+
+  if (address) {
+    contactParts.push(address);
+  }
+
+  fillText("previewName", fullName, "Your Name");
+  fillText("previewTitle", jobTitle, "Your Job Title");
+  fillText(
+    "previewContact",
+    contactParts.join(" | "),
+    "Email | Phone | Address"
+  );
+  fillText("previewAbout", about, "Your summary will appear here.");
+  fillText("previewExperience", experience, "Your experience will appear here.");
+  fillText("previewEducation", education, "Your education will appear here.");
+  fillText("previewSkills", skills, "Your skills will appear here.");
+  fillText(
+    "previewCertifications",
+    certifications,
+    "Your certifications will appear here."
+  );
+  fillText("previewLanguages", languages, "Your languages will appear here.");
 }
 
 async function downloadPDF() {
@@ -31,12 +63,12 @@ async function downloadPDF() {
   const cvElement = document.getElementById("cvPreview");
   const canvas = await html2canvas(cvElement, {
     scale: 2,
-    useCORS: true
+    useCORS: true,
+    backgroundColor: "#ffffff"
   });
 
   const imgData = canvas.toDataURL("image/png");
   const { jsPDF } = window.jspdf;
-
   const pdf = new jsPDF("p", "mm", "a4");
 
   const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -58,8 +90,22 @@ async function downloadPDF() {
     heightLeft -= pdfHeight;
   }
 
-  pdf.save("cv.pdf");
+  const fileName = getValue("fullName")
+    ? `${getValue("fullName").replace(/\s+/g, "_")}_CV.pdf`
+    : "cv.pdf";
+
+  pdf.save(fileName);
 }
 
 generateBtn.addEventListener("click", generateCV);
 downloadPdfBtn.addEventListener("click", downloadPDF);
+
+clearBtn.addEventListener("click", function () {
+  setTimeout(function () {
+    generateCV();
+  }, 0);
+});
+
+window.addEventListener("load", function () {
+  generateCV();
+});
