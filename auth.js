@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = "https://cv-builder-app-x606.onrender.com/api/auth";
 
 const signupForm = document.getElementById("signupForm");
 const loginForm = document.getElementById("loginForm");
