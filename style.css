@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  color: #222;
+  padding: 20px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.form-panel,
+.preview-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.form-panel p {
+  margin-bottom: 16px;
+  color: #555;
+}
+
+label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.button-row {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #111827;
+  color: white;
+  font-size: 14px;
+}
+
+button:hover {
+  opacity: 0.92;
+}
+
+.cv-preview {
+  background: white;
+  color: #111;
+  padding: 24px;
+  min-height: 800px;
+  border: 1px solid #e5e7eb;
+}
+
+.cv-preview h1 {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.cv-preview h2 {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.cv-preview section {
+  margin-bottom: 20px;
+}
+
+.cv-preview h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.cv-preview p {
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}

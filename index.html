@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Builder</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- PDF libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="form-panel">
+      <h1>CV Builder</h1>
+      <p>Create your CV and export it as PDF.</p>
+
+      <form id="cvForm">
+        <label>Full Name</label>
+        <input type="text" id="fullName" placeholder="Your full name" />
+
+        <label>Job Title</label>
+        <input type="text" id="jobTitle" placeholder="Frontend Developer" />
+
+        <label>About</label>
+        <textarea id="about" rows="4" placeholder="Write a short summary about yourself"></textarea>
+
+        <label>Experience</label>
+        <textarea id="experience" rows="6" placeholder="List your work experience"></textarea>
+
+        <label>Education</label>
+        <textarea id="education" rows="5" placeholder="List your education"></textarea>
+
+        <label>Skills</label>
+        <textarea id="skills" rows="4" placeholder="HTML, CSS, JavaScript, Git"></textarea>
+
+        <label>Certifications</label>
+        <textarea id="certifications" rows="4" placeholder="AWS Cloud Practitioner"></textarea>
+
+        <label>Languages</label>
+        <textarea id="languages" rows="3" placeholder="English C1, German B2"></textarea>
+
+        <div class="button-row">
+          <button type="button" id="generateBtn">Generate CV</button>
+          <button type="button" id="downloadPdfBtn">Download PDF</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="preview-panel">
+      <div id="cvPreview" class="cv-preview">
+        <h1 id="previewName">Your Name</h1>
+        <h2 id="previewTitle">Your Job Title</h2>
+
+        <section>
+          <h3>About</h3>
+          <p id="previewAbout">Your about section will appear here.</p>
+        </section>
+
+        <section>
+          <h3>Experience</h3>
+          <p id="previewExperience">Your experience will appear here.</p>
+        </section>
+
+        <section>
+          <h3>Education</h3>
+          <p id="previewEducation">Your education will appear here.</p>
+        </section>
+
+        <section>
+          <h3>Skills</h3>
+          <p id="previewSkills">Your skills will appear here.</p>
+        </section>
+
+        <section>
+          <h3>Certifications</h3>
+          <p id="previewCertifications">Your certifications will appear here.</p>
+        </section>
+
+        <section>
+          <h3>Languages</h3>
+          <p id="previewLanguages">Your languages will appear here.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
