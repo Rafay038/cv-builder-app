@@ -1,3 +1,18 @@
+const token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "login.html";
+}
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", function () {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  });
+}
 const generateBtn = document.getElementById("generateBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const clearBtn = document.getElementById("clearBtn");
