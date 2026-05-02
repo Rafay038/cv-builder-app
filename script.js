@@ -16,6 +16,9 @@ if (logoutBtn) {
 const generateBtn = document.getElementById("generateBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const clearBtn = document.getElementById("clearBtn");
+const templateStyle = document.getElementById("templateStyle");
+const accentColor = document.getElementById("accentColor");
+const cvPreview = document.getElementById("cvPreview");
 
 function getValue(id) {
   return document.getElementById(id).value.trim();
@@ -25,7 +28,23 @@ function fillText(elementId, value, fallbackText) {
   const element = document.getElementById(elementId);
   element.textContent = value ? value : fallbackText;
 }
+function updateTemplate() {
+  if (!cvPreview) {
+    return;
+  }
 
+  const selectedTemplate = templateStyle ? templateStyle.value : "template-classic";
+  const selectedColor = accentColor ? accentColor.value : "#2563eb";
+
+  cvPreview.classList.remove(
+    "template-classic",
+    "template-modern",
+    "template-elegant"
+  );
+
+  cvPreview.classList.add(selectedTemplate);
+  cvPreview.style.setProperty("--accent-color", selectedColor);
+}
 function generateCV() {
   const fullName = getValue("fullName");
   const jobTitle = getValue("jobTitle");
@@ -70,6 +89,7 @@ function generateCV() {
     "Your certifications will appear here."
   );
   fillText("previewLanguages", languages, "Your languages will appear here.");
+    updateTemplate();
 }
 
 async function downloadPDF() {
@@ -120,7 +140,35 @@ clearBtn.addEventListener("click", function () {
     generateCV();
   }, 0);
 });
+const liveFields = [
+  "fullName",
+  "jobTitle",
+  "email",
+  "phone",
+  "address",
+  "about",
+  "experience",
+  "education",
+  "skills",
+  "certifications",
+  "languages"
+];
+
+liveFields.forEach(function (id) {
+  const field = document.getElementById(id);
+
+  if (field) {
+    field.addEventListener("input", generateCV);
+  }
+});
 
 window.addEventListener("load", function () {
   generateCV();
 });
+if (templateStyle) {
+  templateStyle.addEventListener("change", generateCV);
+}
+
+if (accentColor) {
+  accentColor.addEventListener("input", generateCV);
+}

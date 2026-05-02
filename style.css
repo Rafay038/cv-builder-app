@@ -242,3 +242,107 @@ button:hover {
   font-size: 14px;
   color: #111827;
 }
+.template-controls {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+select,
+input[type="color"] {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+  background: white;
+}
+
+input[type="color"] {
+  height: 44px;
+  padding: 4px;
+}
+
+.cv-preview {
+  --accent-color: #2563eb;
+  font-family: Arial, sans-serif;
+}
+
+.cv-top {
+  border-bottom-color: var(--accent-color);
+}
+
+.cv-section h3 {
+  color: var(--accent-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+.template-classic {
+  background: white;
+}
+
+.template-classic .cv-top h1 {
+  color: #111827;
+}
+
+.template-modern {
+  border-top: 12px solid var(--accent-color);
+}
+
+.template-modern .cv-top {
+  border-bottom: none;
+  background: #f8fafc;
+  padding: 24px;
+  margin: -40px -40px 24px;
+}
+
+.template-modern .cv-top h1 {
+  color: var(--accent-color);
+}
+
+.template-modern .cv-section {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 14px;
+}
+
+.template-elegant {
+  font-family: Georgia, serif;
+}
+
+.template-elegant .cv-top {
+  text-align: center;
+  border-bottom: 1px solid var(--accent-color);
+}
+
+.template-elegant .cv-section h3 {
+  text-align: center;
+  border-bottom: none;
+}
+
+.template-elegant .cv-section h3::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 2px;
+  background: var(--accent-color);
+  margin: 8px auto 0;
+}
+
+@media (max-width: 700px) {
+  .template-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .template-modern .cv-top {
+    margin: -24px -24px 24px;
+  }
+}
