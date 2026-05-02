@@ -23,6 +23,21 @@
       <h2>Enter your details</h2>
 
       <form id="cvForm">
+        <div class="template-controls">
+  <div class="field">
+    <label for="templateStyle">CV Template</label>
+    <select id="templateStyle">
+      <option value="template-classic">Classic ATS</option>
+      <option value="template-modern">Modern Blue</option>
+      <option value="template-elegant">Elegant Green</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="accentColor">Accent Color</label>
+    <input id="accentColor" type="color" value="#2563eb" />
+  </div>
+</div>
         <div class="field-grid">
           <div class="field">
             <label for="fullName">Full Name</label>
@@ -89,7 +104,7 @@
     </section>
 
     <section class="preview-card">
-      <div id="cvPreview" class="cv-preview">
+      <div id="cvPreview" class="cv-preview template-classic">
         <div class="cv-top">
           <h1 id="previewName">Your Name</h1>
           <h2 id="previewTitle">Your Job Title</h2>
