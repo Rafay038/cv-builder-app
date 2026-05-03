@@ -5,6 +5,17 @@ if (!token) {
 }
 
 const logoutBtn = document.getElementById("logoutBtn");
+const generateBtn = document.getElementById("generateBtn");
+const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+const clearBtn = document.getElementById("clearBtn");
+const saveCvBtn = document.getElementById("saveCvBtn");
+const saveMessage = document.getElementById("saveMessage");
+
+const templateStyle = document.getElementById("templateStyle");
+const accentColor = document.getElementById("accentColor");
+const cvPreview = document.getElementById("cvPreview");
+
+const CV_API_BASE_URL = "https://cv-builder-app-x606.onrender.com/api/cv";
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", function () {
@@ -13,31 +24,46 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
-const generateBtn = document.getElementById("generateBtn");
-const downloadPdfBtn = document.getElementById("downloadPdfBtn");
-const clearBtn = document.getElementById("clearBtn");
-const saveCvBtn = document.getElementById("saveCvBtn");
-const saveMessage = document.getElementById("saveMessage");
-
-const CV_API_BASE_URL = "https://cv-builder-app-x606.onrender.com/api/cv";
-const templateStyle = document.getElementById("templateStyle");
-const accentColor = document.getElementById("accentColor");
-const cvPreview = document.getElementById("cvPreview");
 
 function getValue(id) {
-  return document.getElementById(id).value.trim();
+  const element = document.getElementById(id);
+  return element ? element.value.trim() : "";
 }
 
 function fillText(elementId, value, fallbackText) {
   const element = document.getElementById(elementId);
+
+  if (!element) {
+    return;
+  }
+
   element.textContent = value ? value : fallbackText;
 }
+
 function setFieldValue(id, value) {
   const field = document.getElementById(id);
 
-  if (field && value) {
+  if (field && value !== undefined && value !== null) {
     field.value = value;
   }
+}
+
+function updateTemplate() {
+  if (!cvPreview) {
+    return;
+  }
+
+  const selectedTemplate = templateStyle ? templateStyle.value : "template-classic";
+  const selectedColor = accentColor ? accentColor.value : "#2563eb";
+
+  cvPreview.classList.remove(
+    "template-classic",
+    "template-modern",
+    "template-elegant"
+  );
+
+  cvPreview.classList.add(selectedTemplate);
+  cvPreview.style.setProperty("--accent-color", selectedColor);
 }
 
 function collectCVData() {
@@ -57,23 +83,7 @@ function collectCVData() {
     accentColor: accentColor ? accentColor.value : "#2563eb"
   };
 }
-function updateTemplate() {
-  if (!cvPreview) {
-    return;
-  }
 
-  const selectedTemplate = templateStyle ? templateStyle.value : "template-classic";
-  const selectedColor = accentColor ? accentColor.value : "#2563eb";
-
-  cvPreview.classList.remove(
-    "template-classic",
-    "template-modern",
-    "template-elegant"
-  );
-
-  cvPreview.classList.add(selectedTemplate);
-  cvPreview.style.setProperty("--accent-color", selectedColor);
-}
 function generateCV() {
   const fullName = getValue("fullName");
   const jobTitle = getValue("jobTitle");
@@ -103,34 +113,63 @@ function generateCV() {
 
   fillText("previewName", fullName, "Your Name");
   fillText("previewTitle", jobTitle, "Your Job Title");
-  fillText(
-    "previewContact",
-    contactParts.join(" | "),
-    "Email | Phone | Address"
-  );
+  fillText("previewContact", contactParts.join(" | "), "Email | Phone | Address");
   fillText("previewAbout", about, "Your summary will appear here.");
   fillText("previewExperience", experience, "Your experience will appear here.");
   fillText("previewEducation", education, "Your education will appear here.");
   fillText("previewSkills", skills, "Your skills will appear here.");
-  fillText(
-    "previewCertifications",
-    certifications,
-    "Your certifications will appear here."
-  );
+  fillText("previewCertifications", certifications, "Your certifications will appear here.");
   fillText("previewLanguages", languages, "Your languages will appear here.");
-    updateTemplate();
+
+  updateTemplate();
 }
 
 async function downloadPDF() {
   generateCV();
 
   const cvElement = document.getElementById("cvPreview");
+
+  if (!cvElement) {
+    return;
+  }
+
   const canvas = await html2canvas(cvElement, {
     scale: 2,
     useCORS: true,
     backgroundColor: "#ffffff"
   });
-  async function saveCV() {
+
+  const imgData = canvas.toDataURL("image/png");
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  const imgWidth = pdfWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+  }
+
+  const fileName = getValue("fullName")
+    ? `${getValue("fullName").replace(/\s+/g, "_")}_CV.pdf`
+    : "cv.pdf";
+
+  pdf.save(fileName);
+}
+
+async function saveCV() {
   generateCV();
 
   if (saveMessage) {
@@ -150,13 +189,19 @@ async function downloadPDF() {
     const data = await response.json();
 
     if (!response.ok) {
-      saveMessage.textContent = data.message || "Could not save CV";
+      if (saveMessage) {
+        saveMessage.textContent = data.message || "Could not save CV";
+      }
       return;
     }
 
-    saveMessage.textContent = data.message;
+    if (saveMessage) {
+      saveMessage.textContent = data.message;
+    }
   } catch (error) {
-    saveMessage.textContent = "Could not connect to backend";
+    if (saveMessage) {
+      saveMessage.textContent = "Could not connect to backend";
+    }
   }
 }
 
@@ -207,47 +252,6 @@ async function loadSavedCV() {
   }
 }
 
-  const imgData = canvas.toDataURL("image/png");
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-
-  const imgWidth = pdfWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
-
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
-  }
-
-  const fileName = getValue("fullName")
-    ? `${getValue("fullName").replace(/\s+/g, "_")}_CV.pdf`
-    : "cv.pdf";
-
-  pdf.save(fileName);
-}
-
-generateBtn.addEventListener("click", generateCV);
-if (saveCvBtn) {
-  saveCvBtn.addEventListener("click", saveCV);
-}
-downloadPdfBtn.addEventListener("click", downloadPDF);
-
-clearBtn.addEventListener("click", function () {
-  setTimeout(function () {
-    generateCV();
-  }, 0);
-});
 const liveFields = [
   "fullName",
   "jobTitle",
@@ -270,9 +274,6 @@ liveFields.forEach(function (id) {
   }
 });
 
-window.addEventListener("load", function () {
-  loadSavedCV();
-});
 if (templateStyle) {
   templateStyle.addEventListener("change", generateCV);
 }
@@ -280,3 +281,31 @@ if (templateStyle) {
 if (accentColor) {
   accentColor.addEventListener("input", generateCV);
 }
+
+if (generateBtn) {
+  generateBtn.addEventListener("click", generateCV);
+}
+
+if (downloadPdfBtn) {
+  downloadPdfBtn.addEventListener("click", downloadPDF);
+}
+
+if (saveCvBtn) {
+  saveCvBtn.addEventListener("click", saveCV);
+}
+
+if (clearBtn) {
+  clearBtn.addEventListener("click", function () {
+    setTimeout(function () {
+      generateCV();
+
+      if (saveMessage) {
+        saveMessage.textContent = "";
+      }
+    }, 0);
+  });
+}
+
+window.addEventListener("load", function () {
+  loadSavedCV();
+});
