@@ -346,3 +346,8 @@ input[type="color"] {
     margin: -24px -24px 24px;
   }
 }
+#saveMessage {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #111827;
+}
