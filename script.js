@@ -16,6 +16,10 @@ if (logoutBtn) {
 const generateBtn = document.getElementById("generateBtn");
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 const clearBtn = document.getElementById("clearBtn");
+const saveCvBtn = document.getElementById("saveCvBtn");
+const saveMessage = document.getElementById("saveMessage");
+
+const CV_API_BASE_URL = "https://cv-builder-app-x606.onrender.com/api/cv";
 const templateStyle = document.getElementById("templateStyle");
 const accentColor = document.getElementById("accentColor");
 const cvPreview = document.getElementById("cvPreview");
@@ -27,6 +31,31 @@ function getValue(id) {
 function fillText(elementId, value, fallbackText) {
   const element = document.getElementById(elementId);
   element.textContent = value ? value : fallbackText;
+}
+function setFieldValue(id, value) {
+  const field = document.getElementById(id);
+
+  if (field && value) {
+    field.value = value;
+  }
+}
+
+function collectCVData() {
+  return {
+    fullName: getValue("fullName"),
+    jobTitle: getValue("jobTitle"),
+    email: getValue("email"),
+    phone: getValue("phone"),
+    address: getValue("address"),
+    about: getValue("about"),
+    experience: getValue("experience"),
+    education: getValue("education"),
+    skills: getValue("skills"),
+    certifications: getValue("certifications"),
+    languages: getValue("languages"),
+    templateStyle: templateStyle ? templateStyle.value : "template-classic",
+    accentColor: accentColor ? accentColor.value : "#2563eb"
+  };
 }
 function updateTemplate() {
   if (!cvPreview) {
@@ -101,6 +130,82 @@ async function downloadPDF() {
     useCORS: true,
     backgroundColor: "#ffffff"
   });
+  async function saveCV() {
+  generateCV();
+
+  if (saveMessage) {
+    saveMessage.textContent = "Saving CV...";
+  }
+
+  try {
+    const response = await fetch(`${CV_API_BASE_URL}/save`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(collectCVData())
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      saveMessage.textContent = data.message || "Could not save CV";
+      return;
+    }
+
+    saveMessage.textContent = data.message;
+  } catch (error) {
+    saveMessage.textContent = "Could not connect to backend";
+  }
+}
+
+async function loadSavedCV() {
+  try {
+    const response = await fetch(`${CV_API_BASE_URL}/my-cv`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 404) {
+      generateCV();
+      return;
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      generateCV();
+      return;
+    }
+
+    setFieldValue("fullName", data.fullName);
+    setFieldValue("jobTitle", data.jobTitle);
+    setFieldValue("email", data.email);
+    setFieldValue("phone", data.phone);
+    setFieldValue("address", data.address);
+    setFieldValue("about", data.about);
+    setFieldValue("experience", data.experience);
+    setFieldValue("education", data.education);
+    setFieldValue("skills", data.skills);
+    setFieldValue("certifications", data.certifications);
+    setFieldValue("languages", data.languages);
+
+    if (templateStyle && data.templateStyle) {
+      templateStyle.value = data.templateStyle;
+    }
+
+    if (accentColor && data.accentColor) {
+      accentColor.value = data.accentColor;
+    }
+
+    generateCV();
+  } catch (error) {
+    generateCV();
+  }
+}
 
   const imgData = canvas.toDataURL("image/png");
   const { jsPDF } = window.jspdf;
@@ -133,6 +238,9 @@ async function downloadPDF() {
 }
 
 generateBtn.addEventListener("click", generateCV);
+if (saveCvBtn) {
+  saveCvBtn.addEventListener("click", saveCV);
+}
 downloadPdfBtn.addEventListener("click", downloadPDF);
 
 clearBtn.addEventListener("click", function () {
@@ -163,7 +271,7 @@ liveFields.forEach(function (id) {
 });
 
 window.addEventListener("load", function () {
-  generateCV();
+  loadSavedCV();
 });
 if (templateStyle) {
   templateStyle.addEventListener("change", generateCV);
